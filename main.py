@@ -1,8 +1,11 @@
-def main():
-    print("=" * 40)
-    print("       F1 HISTORICAL DATABASE")
-    print("=" * 40)
-    print("Project initialized successfully!")
+"""Application entry point for the terminal interface."""
+
+from cli.menu import run_menu
+
+
+def main() -> None:
+    """Start the interactive terminal menu."""
+    run_menu()
 
 
 if __name__ == "__main__":

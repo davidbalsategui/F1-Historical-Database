@@ -7,9 +7,11 @@ storing, querying and analyzing historical Formula 1 data with Python and MySQL.
 The planned relational database will cover drivers, constructors, circuits,
 seasons, races, race results and championship standings.
 
-Phase 1 establishes the project structure, configuration template, dependency
-list and executable entry point. API access, database integration and analysis
-features are planned for later phases.
+The project includes its initial structure, configuration template, dependency
+list and an interactive terminal menu with automated Python tests. Version 1.0
+will initially focus on the 2024 season, while the architecture is intended to
+support additional seasons. API access, database integration and analysis
+features remain planned work.
 
 ## Technologies
 
@@ -21,12 +23,12 @@ features are planned for later phases.
 | Jolpica F1 API | Planned source of historical Formula 1 data |
 | PyCharm | Python development environment |
 | Git and GitHub | Version control and repository hosting |
-| pytest | Framework for future automated tests |
+| pytest | Automated terminal-menu tests and future application tests |
 
 The dependency list also includes `requests` for future HTTP communication,
 `mysql-connector-python` for future MySQL access and `python-dotenv` for future
-environment configuration. The Phase 1 entry point uses only the Python standard
-library.
+environment configuration. The current terminal interface uses only the Python
+standard library.
 
 ## Planned Features
 
@@ -47,6 +49,9 @@ The following features are planned and are not implemented yet:
 ```text
 F1-Historical-Database/
 ├── api/
+├── cli/
+│   ├── __init__.py
+│   └── menu.py
 ├── database/
 ├── models/
 ├── services/
@@ -56,8 +61,12 @@ F1-Historical-Database/
 ├── docs/
 │   └── database/
 │       ├── er_diagram.mmd
-│       └── relational_model.md
+│       ├── relational_model.md
+│       └── design_decisions.md
 ├── tests/
+│   ├── __init__.py
+│   ├── test_import_service.py
+│   └── test_menu.py
 ├── main.py
 └── README.md
 ```
@@ -69,20 +78,23 @@ remain in the repository.
 | Path | Responsibility |
 | --- | --- |
 | `api/` | Future external API communication, pagination and error handling |
+| `cli/` | Menu rendering, input validation and the interactive terminal loop |
 | `database/` | Future MySQL connections, transactions and repositories |
 | `models/` | Future domain entities |
 | `services/` | Future import coordination, validation and statistics |
 | `sql/` | Future schema, relationships, constraints and query scripts |
-| `docs/database/` | Future entity-relationship diagram and relational model documentation |
-| `tests/` | Future automated tests using pytest |
-| `main.py` | Minimal executable entry point |
+| `docs/database/` | Database design documentation, maintained separately from the Python application |
+| `tests/` | Automated CLI tests using pytest and a placeholder for future import tests |
+| `main.py` | Executable entry point that starts the terminal menu |
 | `config.py` | Placeholder for future configuration management |
 | `.env.example` | Environment-variable template with example values |
 
-The application modules, SQL scripts and test module are placeholders in Phase 1.
-The [entity-relationship diagram](docs/database/er_diagram.mmd) and
-[relational model](docs/database/relational_model.md) are also placeholders;
-the database will be designed in Phase 2.
+The API, persistence, domain-model, service and configuration modules remain
+documented placeholders. SQL scripts and the import-service test module also
+remain placeholders. Database design is documented separately in the
+[entity-relationship diagram](docs/database/er_diagram.mmd),
+[relational model](docs/database/relational_model.md) and
+[design decisions](docs/database/design_decisions.md).
 
 ## Getting Started
 
@@ -130,18 +142,48 @@ for later phases; they are not required to run the current entry point.
    python main.py
    ```
 
-   Expected output:
+   The application displays:
 
    ```text
-   ========================================
-          F1 HISTORICAL DATABASE
-   ========================================
-   Project initialized successfully!
+   =========================================
+            F1 HISTORICAL DATABASE
+   =========================================
+
+   1. Buscar piloto
+   2. Consultar temporada
+   3. Consultar Gran Premio
+   4. Ranking histórico de pilotos
+   5. Estadísticas de constructores
+   6. Comparar dos pilotos
+   7. Actualizar base de datos
+   8. Exportar estadísticas
+
+   0. Salir
+
+   Selecciona una opción:
    ```
+
+Enter an option from `1` to `8` to see an informative message identifying that
+feature as pending implementation. The menu then appears again. Invalid input
+displays a validation message and lets you retry. Enter `0` to exit; end of input
+and `Ctrl+C` also close the menu cleanly. The interface is in Spanish.
 
 No database, API connection or environment configuration is required for this
 execution. `.env.example` documents the intended configuration keys; `config.py`
 does not load them yet. Keep real credentials out of version control.
+
+## Running Tests
+
+With the virtual environment activated and dependencies installed, run:
+
+```bash
+python -m pytest -q
+```
+
+The CLI tests cover menu rendering, valid selections, invalid input, repeated
+interaction and application exit behavior. These tests do not require MySQL,
+API access or credentials. Import-service tests will be added when that service
+is implemented.
 
 ## Development Roadmap
 
@@ -180,24 +222,26 @@ does not load them yet. Keep real credentials out of version control.
 - Driver comparisons
 - Championship analysis
 
-### Phase 6 — Interface and Testing (planned)
+### Phase 6 — Interface and Testing (partially implemented)
 
-- Command-line interface
-- Automated tests
-- Documentation improvements
-- Optional data visualizations
+- Interactive terminal menu and CLI tests are implemented
+- Feature handlers and application-level tests are planned
+- Further documentation improvements are planned
+- Optional data visualizations are planned
 
 ## Data Source
 
 The planned data source is the [Jolpica F1 API](https://api.jolpi.ca/).
-Data retrieval has not been implemented in Phase 1.
+Data retrieval has not been implemented yet.
 
 ## Project Status
 
-**Early Development — Phase 1: Project Initialization.**
+**Early Development — Python structure and terminal-menu scaffold available.**
 
-The initial structure and executable entry point are ready. Database design,
-persistence, API integration and analysis remain future work.
+The initial structure, interactive menu and CLI tests are ready. Menu features
+are placeholders; persistence, API integration and statistical analysis are not
+implemented. Database design documentation is maintained separately, and no SQL
+schema has been implemented by the Python application.
 
 ## License
 
