@@ -7,28 +7,38 @@ storing, querying and analyzing historical Formula 1 data with Python and MySQL.
 The planned relational database will cover drivers, constructors, circuits,
 seasons, races, race results and championship standings.
 
-The project includes its initial structure, configuration template, dependency
-list and an interactive terminal menu with automated Python tests. Version 1.0
-will initially focus on the 2024 season, while the architecture is intended to
-support additional seasons. API access, database integration and analysis
-features remain planned work.
+El proyecto incluye su estructura inicial, plantilla de configuración,
+dependencias y menú interactivo con pruebas automatizadas. La versión 1.0 se
+centrará inicialmente en 2024 y la arquitectura permitirá otras temporadas.
+La conexión MySQL y el cliente Jolpica están implementados; la importación y el
+análisis siguen pendientes.
+
+El [cliente Jolpica de la fase 4](docs/api/jolpica_client.md) permite consultar
+temporadas, pilotos, constructores, circuitos, calendarios y resultados de 2024,
+con paginación, límites de uso, reintentos y pruebas mediante mocks.
+
+La carga de `.env`, la conexión MySQL, las transacciones y el diagnóstico de
+solo lectura están implementados. Consulta la
+[guía de conexión MySQL](docs/database/mysql_connection.md) para configurar
+credenciales, ejecutar el diagnóstico y revisar el procedimiento de Workbench.
+`sql/schema.sql` sigue siendo un marcador; la documentación propone 11 entidades
+y todavía no identifica las seis tablas aprobadas que solicita esta fase.
 
 ## Technologies
 
 | Technology | Role |
 | --- | --- |
 | Python 3.12+ | Application development and future data processing |
-| MySQL | Planned relational data storage |
+| MySQL | Conexión, transacciones y diagnóstico de solo lectura; esquema pendiente |
 | MySQL Workbench | Planned database modeling and administration |
-| Jolpica F1 API | Planned source of historical Formula 1 data |
+| Jolpica F1 API | Cliente HTTP implementado para consultar datos históricos |
 | PyCharm | Python development environment |
 | Git and GitHub | Version control and repository hosting |
 | pytest | Automated terminal-menu tests and future application tests |
 
-The dependency list also includes `requests` for future HTTP communication,
-`mysql-connector-python` for future MySQL access and `python-dotenv` for future
-environment configuration. The current terminal interface uses only the Python
-standard library.
+Las dependencias incluyen `requests` para la comunicación HTTP con Jolpica,
+`mysql-connector-python` para conexión MySQL y `python-dotenv` para cargar la
+configuración local. El menú actual utiliza solo la biblioteca estándar de Python.
 
 ## Planned Features
 
@@ -77,21 +87,22 @@ remain in the repository.
 
 | Path | Responsibility |
 | --- | --- |
-| `api/` | Future external API communication, pagination and error handling |
+| `api/` | Cliente Jolpica con Session, paginación, caché y errores controlados |
 | `cli/` | Menu rendering, input validation and the interactive terminal loop |
-| `database/` | Future MySQL connections, transactions and repositories |
+| `database/` | Conexión MySQL, transacciones y diagnóstico; repositorios pendientes |
 | `models/` | Future domain entities |
 | `services/` | Future import coordination, validation and statistics |
 | `sql/` | Future schema, relationships, constraints and query scripts |
 | `docs/database/` | Database design documentation, maintained separately from the Python application |
-| `tests/` | Automated CLI tests using pytest and a placeholder for future import tests |
+| `tests/` | Pruebas de CLI, configuración, conexión y diagnóstico; importación pendiente |
 | `main.py` | Executable entry point that starts the terminal menu |
-| `config.py` | Placeholder for future configuration management |
+| `config.py` | Carga de dotenv y validación de configuración MySQL |
 | `.env.example` | Environment-variable template with example values |
 
-The API, persistence, domain-model, service and configuration modules remain
-documented placeholders. SQL scripts and the import-service test module also
-remain placeholders. Database design is documented separately in the
+Los módulos de repositorios, modelos de dominio y servicios siguen como
+marcadores. Los scripts SQL y las pruebas de importación también están pendientes.
+La conexión y la configuración están implementadas con pruebas mediante mocks.
+El diseño se documenta por separado en
 [entity-relationship diagram](docs/database/er_diagram.mmd),
 [relational model](docs/database/relational_model.md) and
 [design decisions](docs/database/design_decisions.md).
@@ -168,9 +179,10 @@ feature as pending implementation. The menu then appears again. Invalid input
 displays a validation message and lets you retry. Enter `0` to exit; end of input
 and `Ctrl+C` also close the menu cleanly. The interface is in Spanish.
 
-No database, API connection or environment configuration is required for this
-execution. `.env.example` documents the intended configuration keys; `config.py`
-does not load them yet. Keep real credentials out of version control.
+El menú no requiere MySQL ni credenciales. Para el diagnóstico de base de datos,
+configura un `.env` local siguiendo la [guía MySQL](docs/database/mysql_connection.md)
+y ejecuta `python -m database.diagnostic`. El comando señala cualquier problema
+sin crear ni modificar tablas. Mantén las credenciales reales fuera de Git.
 
 ## Running Tests
 
@@ -180,10 +192,9 @@ With the virtual environment activated and dependencies installed, run:
 python -m pytest -q
 ```
 
-The CLI tests cover menu rendering, valid selections, invalid input, repeated
-interaction and application exit behavior. These tests do not require MySQL,
-API access or credentials. Import-service tests will be added when that service
-is implemented.
+Las pruebas cubren el menú, la configuración, la conexión, el cierre de recursos,
+las transacciones, el diagnóstico y el cliente Jolpica. Utilizan mocks y no requieren MySQL,
+acceso a la API ni credenciales. Las pruebas de importación siguen pendientes.
 
 ## Development Roadmap
 
@@ -202,18 +213,21 @@ is implemented.
 - Database normalization
 - MySQL schema
 
-### Phase 3 — Database Integration (planned)
+### Phase 3 — Database Integration (partially implemented)
 
-- MySQL connection
-- Repository layer
-- CRUD operations
+- Conexión MySQL, dotenv y transacciones implementados
+- Diagnóstico `SELECT 1`, base seleccionada y comprobación de tablas implementado
+- Pruebas automatizadas con mocks implementadas
+- Verificación real pendiente de credenciales y nombres de las seis tablas
+- Repositorios y CRUD pendientes
 
-### Phase 4 — API Integration (planned)
+### Phase 4 — API Integration (partially implemented)
 
-- Jolpica API client
-- Historical data retrieval
-- Pagination
-- Data importation
+- Cliente Jolpica y seis consultas reutilizables implementados
+- Paginación y fusión de resultados por carrera implementadas
+- Límites de uso, reintentos, caché y pruebas sin red implementados
+- Consulta real de la primera ronda de 2024 verificada
+- Importación a MySQL pendiente
 
 ### Phase 5 — Statistics and Analysis (planned)
 
@@ -231,17 +245,20 @@ is implemented.
 
 ## Data Source
 
-The planned data source is the [Jolpica F1 API](https://api.jolpi.ca/).
-Data retrieval has not been implemented yet.
+El cliente consulta la [Jolpica F1 API](https://api.jolpi.ca/) mediante endpoints
+estables compatibles con Ergast. Consulta los endpoints verificados y ejemplos
+de uso en la [guía del cliente](docs/api/jolpica_client.md). La importación a la
+base de datos sigue pendiente.
 
 ## Project Status
 
 **Early Development — Python structure and terminal-menu scaffold available.**
 
-The initial structure, interactive menu and CLI tests are ready. Menu features
-are placeholders; persistence, API integration and statistical analysis are not
-implemented. Database design documentation is maintained separately, and no SQL
-schema has been implemented by the Python application.
+La estructura inicial, el menú, la configuración, la conexión MySQL y el cliente Jolpica están
+disponibles con pruebas automatizadas. Las funciones del menú, repositorios,
+importación y análisis siguen pendientes. No se ha implementado ni ejecutado
+un esquema SQL: `schema.sql` continúa como marcador y la documentación de diseño
+mantiene su propuesta original de 11 entidades.
 
 ## License
 
