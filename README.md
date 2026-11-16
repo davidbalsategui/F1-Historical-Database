@@ -47,32 +47,24 @@ The following features are planned and are not implemented yet:
 ```text
 F1-Historical-Database/
 ├── api/
-│   ├── __init__.py
-│   └── jolpica_client.py
 ├── database/
-│   ├── __init__.py
-│   ├── connection.py
-│   └── repositories.py
 ├── models/
-│   ├── __init__.py
-│   └── entities.py
 ├── services/
-│   ├── __init__.py
-│   ├── import_service.py
-│   └── statistics_service.py
 ├── sql/
 │   ├── schema.sql
 │   └── queries.sql
+├── docs/
+│   └── database/
+│       ├── er_diagram.mmd
+│       └── relational_model.md
 ├── tests/
-│   └── test_import_service.py
 ├── main.py
-├── config.py
-├── requirements.txt
-├── .env.example
-├── .gitignore
-├── README.md
-└── LICENSE
+└── README.md
 ```
+
+This tree shows the main project structure. Existing package modules,
+`config.py`, `requirements.txt`, `.env.example`, `.gitignore` and `LICENSE`
+remain in the repository.
 
 | Path | Responsibility |
 | --- | --- |
@@ -81,12 +73,16 @@ F1-Historical-Database/
 | `models/` | Future domain entities |
 | `services/` | Future import coordination, validation and statistics |
 | `sql/` | Future schema, relationships, constraints and query scripts |
+| `docs/database/` | Future entity-relationship diagram and relational model documentation |
 | `tests/` | Future automated tests using pytest |
 | `main.py` | Minimal executable entry point |
 | `config.py` | Placeholder for future configuration management |
 | `.env.example` | Environment-variable template with example values |
 
 The application modules, SQL scripts and test module are placeholders in Phase 1.
+The [entity-relationship diagram](docs/database/er_diagram.mmd) and
+[relational model](docs/database/relational_model.md) are also placeholders;
+the database will be designed in Phase 2.
 
 ## Getting Started
 
