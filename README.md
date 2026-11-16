@@ -10,8 +10,14 @@ seasons, races, race results and championship standings.
 El proyecto incluye su estructura inicial, plantilla de configuración,
 dependencias y menú interactivo con pruebas automatizadas. La versión 1.0 se
 centrará inicialmente en 2024 y la arquitectura permitirá otras temporadas.
-La conexión MySQL y el cliente Jolpica están implementados; la importación y el
-análisis siguen pendientes.
+La conexión MySQL, el cliente Jolpica y el importador de 2024 están implementados.
+La ejecución real del importador requiere el DDL aprobado y credenciales MySQL;
+el análisis sigue pendiente.
+
+La [guía de importación de 2024](docs/import/import_2024.md) describe la ejecución,
+el mapeo de las seis tablas y la recuperación ante errores. El
+[informe de la fase 5](docs/import/phase5_report.md) distingue los 479 resultados
+reales obtenidos de Jolpica de las escrituras MySQL, todavía pendientes.
 
 El [cliente Jolpica de la fase 4](docs/api/jolpica_client.md) permite consultar
 temporadas, pilotos, constructores, circuitos, calendarios y resultados de 2024,
@@ -44,7 +50,7 @@ configuración local. El menú actual utiliza solo la biblioteca estándar de Py
 
 The following features are planned and are not implemented yet:
 
-- Historical F1 data importation
+- Importación histórica de otras temporadas (2024 implementada, pendiente de validación MySQL real)
 - Driver and constructor management
 - Race results storage
 - Championship standings
@@ -89,19 +95,20 @@ remain in the repository.
 | --- | --- |
 | `api/` | Cliente Jolpica con Session, paginación, caché y errores controlados |
 | `cli/` | Menu rendering, input validation and the interactive terminal loop |
-| `database/` | Conexión MySQL, transacciones y diagnóstico; repositorios pendientes |
+| `database/` | Conexión, transacciones, diagnóstico y repositorios con mapeo del esquema |
 | `models/` | Future domain entities |
-| `services/` | Future import coordination, validation and statistics |
+| `services/` | Importación y validación de 2024; estadísticas pendientes |
 | `sql/` | Future schema, relationships, constraints and query scripts |
 | `docs/database/` | Database design documentation, maintained separately from the Python application |
-| `tests/` | Pruebas de CLI, configuración, conexión y diagnóstico; importación pendiente |
+| `tests/` | Pruebas de CLI, configuración, MySQL, API, repositorios e importación con mocks |
 | `main.py` | Executable entry point that starts the terminal menu |
 | `config.py` | Carga de dotenv y validación de configuración MySQL |
 | `.env.example` | Environment-variable template with example values |
 
-Los módulos de repositorios, modelos de dominio y servicios siguen como
-marcadores. Los scripts SQL y las pruebas de importación también están pendientes.
-La conexión y la configuración están implementadas con pruebas mediante mocks.
+Los modelos de dominio y el servicio de estadísticas siguen como marcadores.
+Los scripts SQL permanecen sin implementar. Conexión, API, repositorios e
+importador cuentan con pruebas mediante mocks. El importador valida el esquema
+existente antes de escribir y no lo crea ni lo modifica.
 El diseño se documenta por separado en
 [entity-relationship diagram](docs/database/er_diagram.mmd),
 [relational model](docs/database/relational_model.md) and
@@ -193,8 +200,8 @@ python -m pytest -q
 ```
 
 Las pruebas cubren el menú, la configuración, la conexión, el cierre de recursos,
-las transacciones, el diagnóstico y el cliente Jolpica. Utilizan mocks y no requieren MySQL,
-acceso a la API ni credenciales. Las pruebas de importación siguen pendientes.
+las transacciones, el diagnóstico, el cliente Jolpica, los repositorios y la
+importación de 2024. Utilizan mocks y no requieren MySQL, Internet ni credenciales.
 
 ## Development Roadmap
 
@@ -219,7 +226,7 @@ acceso a la API ni credenciales. Las pruebas de importación siguen pendientes.
 - Diagnóstico `SELECT 1`, base seleccionada y comprobación de tablas implementado
 - Pruebas automatizadas con mocks implementadas
 - Verificación real pendiente de credenciales y nombres de las seis tablas
-- Repositorios y CRUD pendientes
+- Repositorios para el importador implementados; CRUD general pendiente
 
 ### Phase 4 — API Integration (partially implemented)
 
@@ -227,16 +234,24 @@ acceso a la API ni credenciales. Las pruebas de importación siguen pendientes.
 - Paginación y fusión de resultados por carrera implementadas
 - Límites de uso, reintentos, caché y pruebas sin red implementados
 - Consulta real de la primera ronda de 2024 verificada
-- Importación a MySQL pendiente
+- Importador de 2024 implementado en la fase 5; ejecución MySQL real pendiente
 
-### Phase 5 — Statistics and Analysis (planned)
+### Phase 5 — 2024 Data Importer (implemented, live MySQL validation pending)
+
+- Descarga paginada y normalización del calendario y los resultados
+- Resolución de claves internas y upserts idempotentes
+- Transacción atómica, rollback y reinicio mediante reimportación
+- Progreso, contadores e informe de validación
+- Fuente real verificada: 24 rondas y 479 resultados; faltan DDL y credenciales para MySQL
+
+### Phase 6 — Statistics and Analysis (planned)
 
 - SQL queries
 - Rankings
 - Driver comparisons
 - Championship analysis
 
-### Phase 6 — Interface and Testing (partially implemented)
+### Phase 7 — Interface and Testing (partially implemented)
 
 - Interactive terminal menu and CLI tests are implemented
 - Feature handlers and application-level tests are planned
@@ -247,16 +262,18 @@ acceso a la API ni credenciales. Las pruebas de importación siguen pendientes.
 
 El cliente consulta la [Jolpica F1 API](https://api.jolpi.ca/) mediante endpoints
 estables compatibles con Ergast. Consulta los endpoints verificados y ejemplos
-de uso en la [guía del cliente](docs/api/jolpica_client.md). La importación a la
-base de datos sigue pendiente.
+de uso en la [guía del cliente](docs/api/jolpica_client.md). El importador utiliza
+estas consultas; su ejecución contra MySQL sigue pendiente de la configuración
+y del mapeo del esquema aprobado.
 
 ## Project Status
 
 **Early Development — Python structure and terminal-menu scaffold available.**
 
-La estructura inicial, el menú, la configuración, la conexión MySQL y el cliente Jolpica están
-disponibles con pruebas automatizadas. Las funciones del menú, repositorios,
-importación y análisis siguen pendientes. No se ha implementado ni ejecutado
+La estructura inicial, el menú, la configuración, la conexión MySQL, el cliente
+Jolpica, los repositorios y el importador de 2024 están disponibles con pruebas
+automatizadas. Las funciones del menú y el análisis siguen pendientes.
+No se ha implementado ni ejecutado
 un esquema SQL: `schema.sql` continúa como marcador y la documentación de diseño
 mantiene su propuesta original de 11 entidades.
 
