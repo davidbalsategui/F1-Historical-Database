@@ -1,0 +1,1 @@
+-- Placeholder for the future MySQL schema, constraints, and relationships.
