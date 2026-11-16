@@ -1,1 +1,107 @@
-%% Placeholder for the entity-relationship diagram to be designed in Phase 2.
+%% Preliminary proposal; subject to review and approval before SQL implementation.
+%% Source of truth: keep the fenced diagram in relational_model.md synchronized.
+%% PK/FK markers show keys; nullability and composite constraints are documented there.
+erDiagram
+    seasons {
+        SMALLINT_UNSIGNED season_year PK
+    }
+
+    drivers {
+        BIGINT_UNSIGNED driver_id PK
+        VARCHAR_200 full_name
+        DATE date_of_birth
+        VARCHAR_100 nationality
+    }
+
+    constructors {
+        BIGINT_UNSIGNED constructor_id PK
+        VARCHAR_200 name
+        VARCHAR_100 nationality
+    }
+
+    circuits {
+        BIGINT_UNSIGNED circuit_id PK
+        VARCHAR_200 name
+        VARCHAR_100 locality
+        VARCHAR_100 country
+        DECIMAL_9_6 latitude
+        DECIMAL_9_6 longitude
+    }
+
+    races {
+        BIGINT_UNSIGNED race_id PK
+        SMALLINT_UNSIGNED season_year FK
+        BIGINT_UNSIGNED circuit_id FK
+        SMALLINT_UNSIGNED round_number
+        VARCHAR_200 race_name
+        DATE race_date
+        BOOLEAN is_sprint_weekend
+    }
+
+    entries {
+        BIGINT_UNSIGNED entry_id PK
+        BIGINT_UNSIGNED race_id FK
+        BIGINT_UNSIGNED driver_id FK
+        BIGINT_UNSIGNED constructor_id FK
+    }
+
+    race_result {
+        BIGINT_UNSIGNED entry_id PK, FK
+        SMALLINT_UNSIGNED position
+        VARCHAR_50 position_label
+        DECIMAL_8_3 points
+        SMALLINT_UNSIGNED laps_completed
+        BIGINT_UNSIGNED elapsed_time_ms
+        VARCHAR_100 status
+    }
+
+    qualifying_result {
+        BIGINT_UNSIGNED entry_id PK, FK
+        SMALLINT_UNSIGNED position
+        INT_UNSIGNED best_lap_time_ms
+        INT_UNSIGNED q1_time_ms
+        INT_UNSIGNED q2_time_ms
+        INT_UNSIGNED q3_time_ms
+        VARCHAR_100 status
+    }
+
+    sprint_qualifying_result {
+        BIGINT_UNSIGNED entry_id PK, FK
+        SMALLINT_UNSIGNED position
+        INT_UNSIGNED best_lap_time_ms
+        INT_UNSIGNED q1_time_ms
+        INT_UNSIGNED q2_time_ms
+        INT_UNSIGNED q3_time_ms
+        VARCHAR_100 status
+    }
+
+    sprint_result {
+        BIGINT_UNSIGNED entry_id PK, FK
+        SMALLINT_UNSIGNED position
+        VARCHAR_50 position_label
+        DECIMAL_8_3 points
+        SMALLINT_UNSIGNED laps_completed
+        BIGINT_UNSIGNED elapsed_time_ms
+        VARCHAR_100 status
+    }
+
+    practice_result {
+        BIGINT_UNSIGNED practice_result_id PK
+        BIGINT_UNSIGNED entry_id FK
+        TINYINT_UNSIGNED practice_session
+        SMALLINT_UNSIGNED position
+        INT_UNSIGNED best_lap_time_ms
+        SMALLINT_UNSIGNED laps_completed
+        VARCHAR_100 status
+    }
+
+    seasons ||..o{ races : contains
+    circuits |o..o{ races : hosts
+    races ||..o{ entries : includes
+    drivers ||..o{ entries : participates_in
+    constructors |o..o{ entries : represented_by
+    entries ||--o| race_result : has_race_result
+    entries ||--o| qualifying_result : has_qualifying_result
+    entries ||--o| sprint_qualifying_result : has_sprint_qualifying_result
+    entries ||--o| sprint_result : has_sprint_result
+    entries ||..o{ practice_result : has_practice_results
